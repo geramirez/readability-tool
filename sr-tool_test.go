@@ -18,7 +18,7 @@ func TestCountSentences(t *testing.T) {
 	for _, example := range countSentencesTests {
 		actual := countSentences(example.sentance)
 		if actual != example.expected {
-			t.Errorf("Fib(%d): expected %d, actual %d", example.sentance, example.expected, actual)
+			t.Errorf("countSentences(%s): expected %d, actual %d", example.sentance, example.expected, actual)
 		}
 	}
 }
@@ -41,7 +41,7 @@ func TestCountSyllables(t *testing.T) {
 	for _, example := range countSyllablesTest {
 		actual := countSyllables(example.sentance)
 		if actual != example.expected {
-			t.Errorf("Fib(%d): expected %d, actual %d", example.sentance, example.expected, actual)
+			t.Errorf("countSyllables(%s): expected %d, actual %d", example.sentance, example.expected, actual)
 		}
 
 	}
