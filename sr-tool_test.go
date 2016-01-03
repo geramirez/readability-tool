@@ -23,6 +23,23 @@ func TestCountSentences(t *testing.T) {
 	}
 }
 
+var countWordTests = []test{
+	{"Es una receta que puede prepararse en menos de 30 minutos.", 11},
+	{"Ponle un tomate grande. Ponle una taza de pasta de tomate", 11},
+	{"¡Ideal para mimar a toda la familia!", 7}, {"¿Como se llama?", 3},
+	{"¡Hola! ¿Como? Si.", 3}, {"¡Hola!!!! ¿Como??? Si.....", 3},
+}
+
+func TestGetWords(t *testing.T) {
+	for _, example := range countWordTests {
+		actual := len(getWords(example.sentance))
+		if actual != example.expected {
+			t.Errorf("len(getWords(%s)): expected %d, actual %d", example.sentance, example.expected, actual)
+		}
+
+	}
+}
+
 var countSyllablesTest = []test{
 	{"ola", 2}, {"Amor", 2}, {"Usual", 2}, {"caos", 2}, {"leo", 2},
 	{"Traer", 2}, {"aire", 2}, {"ciudad", 2}, {"pie", 2}, {"tomate", 3},
