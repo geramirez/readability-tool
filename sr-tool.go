@@ -1,11 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"io"
+	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strings"
 	"unicode/utf8"
 )
+
+type stats struct {
+	Syllables   int     `json:"syllables"`
+	Words       int     `json:"words"`
+	Sentences   int     `json:"sentences"`
+	Readability float32 `json:"readability"`
+}
 
 //PUNCTUATION is a regex string for finding ".", "?", and "!".
 var PUNCTUATION = regexp.MustCompile("[.?!]+\\s")
@@ -90,14 +100,23 @@ func getCounts(text string) (int, int, int) {
 // getStats calculates Fernandez Huerta's readability scores using an updated formula found here:
 // http://linguistlist.org/issues/22/22-2332.html
 // This function also returns syllables, words, and sentences.
-func getStats(text string) (int, int, int, float32) {
+func getStats(text string) stats {
 	syllables, words, sentences := getCounts(text)
 	readability := 206.84 - 60.0*(float32(syllables)/float32(words)) - 102.0*(float32(sentences)/float32(words))
-	return syllables, words, sentences, readability
+	return stats{syllables, words, sentences, readability}
+}
+
+// serveStats collects stats from post request and returns stats in json format
+func serveStats(rw http.ResponseWriter, req *http.Request) {
+	body, _ := ioutil.ReadAll(req.Body)
+	stats := getStats(string(body))
+	statsJson, _ := json.Marshal(stats)
+	io.WriteString(rw, string(statsJson))
 }
 
 func main() {
-	syllables, words, sentences, readability := getStats("Hello")
-	fmt.Println(syllables, words, sentences, readability)
+
+	http.HandleFunc("/", serveStats)
+	http.ListenAndServe(":8000", nil)
 
 }
