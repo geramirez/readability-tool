@@ -1,16 +1,13 @@
-package main
+package scorer
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strings"
 	"unicode/utf8"
 )
 
-type stats struct {
+// Stats struct stores readability data for exports
+type Stats struct {
 	Syllables   int     `json:"syllables"`
 	Words       int     `json:"words"`
 	Sentences   int     `json:"sentences"`
@@ -97,26 +94,11 @@ func getCounts(text string) (int, int, int) {
 	return totalSyllables, totalWords, countSentences(text)
 }
 
-// getStats calculates Fernandez Huerta's readability scores using an updated formula found here:
+// GetStats calculates Fernandez Huerta's readability scores using an updated formula found here:
 // http://linguistlist.org/issues/22/22-2332.html
 // This function also returns syllables, words, and sentences.
-func getStats(text string) stats {
+func GetStats(text string) Stats {
 	syllables, words, sentences := getCounts(text)
 	readability := 206.84 - 60.0*(float32(syllables)/float32(words)) - 102.0*(float32(sentences)/float32(words))
-	return stats{syllables, words, sentences, readability}
-}
-
-// serveStats collects stats from post request and returns stats in json format
-func serveStats(rw http.ResponseWriter, req *http.Request) {
-	body, _ := ioutil.ReadAll(req.Body)
-	stats := getStats(string(body))
-	statsJson, _ := json.Marshal(stats)
-	io.WriteString(rw, string(statsJson))
-}
-
-func main() {
-
-	http.HandleFunc("/", serveStats)
-	http.ListenAndServe(":8000", nil)
-
+	return Stats{syllables, words, sentences, readability}
 }

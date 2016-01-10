@@ -1,4 +1,4 @@
-package main
+package scorer
 
 import "testing"
 
