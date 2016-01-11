@@ -1,15 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Spanish Readability API</title>
+    <title>Spanish Readability API</title>
 </head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 <body>
 
-<h1>Spanish Readability Calculator API</h1>
-<p>Simple endpoint that returns the readability score of spanish text</p>
+    <h1>Spanish Readability Calculator API</h1>
+    <p>Simple endpoint that returns the readability score of spanish text</p>
 
-<h3>Usage</h3>
-<p>curl -X POST <SITE>/api -d "TEXT"</p>
-<p>Returns JSON {"syllables":int ,"words": int ,"sentences": int,"readability": float32}</p>
+    <h3>Usage</h3>
+    <p>curl -X POST
+        <SITE>/api -d "TEXT"</p>
+    <p>Returns JSON {"syllables":int ,"words": int ,"sentences": int,"readability":
+        float32}</p>
 </body>
+
+<textarea id='submission-text' rows="8" cols="50">
+    La literatura en español es la suma de las obras escritas en español o castellano
+    en el conjunto de los países hispanohablantes. Es una de las más importantes
+    del mundo, no sólo porque la lengua en la que se ha escrito y escribe sea una
+    de las más difundidas, sino por la calidad y el volumen de sus aportaciones
+    al elenco de la literatura universal
+</textarea>
+
+</br>
+<button id="get-stats" type="button">Get Stats</button>
+</br>
+</br>
+
+<div id='sentences'></div>
+<div id='words'></div>
+<div id='syllables'></div>
+<div id='readability'></div>
+
+<script>
+    document.getElementById("get-stats").addEventListener("click", getStats);
+    function getStats()
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200)
+            {
+                var stats = JSON.parse(xhr.responseText);
+		 document.getElementById("syllables").innerHTML = 'Syllables: ' + stats.syllables;
+		 document.getElementById("words").innerHTML = 'Words: ' + stats.words;
+		 document.getElementById("sentences").innerHTML = 'Sentences: ' + stats.sentences;
+		 document.getElementById("readability").innerHTML = 'Readability' + stats.readability;
+
+	    }
+        };
+        xhr.send(document.getElementById("submission-text").value);
+    }
+
+</script>
+
 </html>

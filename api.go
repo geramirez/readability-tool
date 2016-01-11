@@ -11,6 +11,8 @@ import (
 
 // serveStats collects stats from post request and returns stats in json format
 func serveStats(rw http.ResponseWriter, req *http.Request) {
+	rw.Header().Set("Access-Control-Allow-Origin", "*")
+	rw.Header().Add("Access-Control-Allow-Methods", "POST")
 	body, _ := ioutil.ReadAll(req.Body)
 	stats := scorer.GetStats(string(body))
 	statsJSON, _ := json.Marshal(stats)
