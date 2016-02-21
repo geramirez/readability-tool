@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"scorer"
+	"github.com/geramirez/readability-tool/scorer"
 )
 
 // serveStats collects stats from post request and returns stats in json format
@@ -19,7 +19,7 @@ func serveStats(rw http.ResponseWriter, req *http.Request) {
 	io.WriteString(rw, string(statsJSON))
 }
 
-func init() {
+func main() {
 	http.Handle("/", http.FileServer(http.Dir("./static")))
 	http.HandleFunc("/api", serveStats)
 	http.ListenAndServe(":8000", nil)
