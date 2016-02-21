@@ -3,6 +3,7 @@ package scorer
 import (
 	"regexp"
 	"strings"
+	"sync"
 	"unicode/utf8"
 )
 
@@ -90,11 +91,31 @@ func calculateReadability(syllables int, words int, sentences int) float32 {
 
 // getCounts calculates syllables, words, and sentences
 func getSyllablesAndWords(text string) (int, int) {
-	var totalSyllables, totalWords int
-	for _, word := range getWords(text) {
-		totalWords++
-		totalSyllables += countSyllables(word)
+	var totalSyllables int
+	var wg sync.WaitGroup
+
+	syllablesChannel := make(chan int)
+
+	words := getWords(text)
+	totalWords := len(words)
+
+	wg.Add(totalWords)
+	// Send words
+	for _, word := range words {
+		go func(word string) {
+			defer wg.Done()
+			syllablesChannel <- countSyllables(word)
+		}(word)
 	}
+	// Get word counts
+	go func() {
+		for syllablesCount := range syllablesChannel {
+			totalSyllables += syllablesCount
+		}
+	}()
+
+	wg.Wait()
+
 	return totalSyllables, totalWords
 }
 
