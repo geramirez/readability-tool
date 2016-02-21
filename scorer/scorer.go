@@ -46,7 +46,7 @@ func getLetterType(letter rune) int {
 }
 
 // countSyllables calculates the number of syllables using a modified
-// version of the syllabification algorithm for spanish found in
+// version of the syllabification algorithm for Spanish found in
 // Heriberto Cuayáhuitl's article: http://www.dfki.de/~hecu01/publications/hc-cicling2004.pdf
 func countSyllables(word string) int {
 	word = strings.ToLower(word)
@@ -84,7 +84,7 @@ func countSyllables(word string) int {
 	return syllables
 }
 
-// calculateReadability returns the spanish readability score
+// calculateReadability returns the Spanish readability score
 func calculateReadability(syllables int, words int, sentences int) float32 {
 	return 206.84 - 60.0*(float32(syllables)/float32(words)) - 102.0*(float32(sentences)/float32(words))
 }
