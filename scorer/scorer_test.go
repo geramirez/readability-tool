@@ -12,6 +12,13 @@ type testRunes struct {
 	expected int
 }
 
+type testReadability struct {
+	syllables int
+	words     int
+	sentences int
+	expected  float32
+}
+
 var countSentencesTests = []test{
 	{"Es una receta que puede prepararse en menos de 30 minutos.", 1},
 	{"Ponle un tomate grande. Ponle una taza de pasta de tomate", 2},
@@ -54,7 +61,7 @@ func TestgetLetterType(t *testing.T) {
 	for _, example := range getLetterTypeTest {
 		actual := getLetterType(example.letter)
 		if actual != example.expected {
-			t.Errorf("Got %s, Expected %s", actual, example.expected)
+			t.Errorf("Got %d, Expected %d", actual, example.expected)
 		}
 	}
 }
@@ -79,6 +86,19 @@ func TestCountSyllables(t *testing.T) {
 		if actual != example.expected {
 			t.Errorf("countSyllables(%s): expected %d, actual %d", example.sentence, example.expected, actual)
 		}
+	}
+}
 
+var readabilityTests = []testReadability{
+	{1, 1, 1, 44.839996}, {100, 100, 100, 44.839996}, {1000, 1000, 100, 98.84},
+	{2423, 232, 234, 191.27913}, {34234, 223, 323, 205.60947}, {235, 324, 112, 37.614456},
+}
+
+func TestCalculateReadability(t *testing.T) {
+	for _, example := range readabilityTests {
+		actual := calculateReadability(example.sentences, example.syllables, example.words)
+		if actual != example.expected {
+			t.Errorf("Expected %f, actual %f", example.expected, actual)
+		}
 	}
 }
