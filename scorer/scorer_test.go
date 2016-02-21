@@ -3,7 +3,12 @@ package scorer
 import "testing"
 
 type test struct {
-	sentance string
+	sentence string
+	expected int
+}
+
+type testRunes struct {
+	letter   rune
 	expected int
 }
 
@@ -16,9 +21,9 @@ var countSentencesTests = []test{
 
 func TestCountSentences(t *testing.T) {
 	for _, example := range countSentencesTests {
-		actual := countSentences(example.sentance)
+		actual := countSentences(example.sentence)
 		if actual != example.expected {
-			t.Errorf("countSentences(%s): expected %d, actual %d", example.sentance, example.expected, actual)
+			t.Errorf("countSentences(%s): expected %d, actual %d", example.sentence, example.expected, actual)
 		}
 	}
 }
@@ -32,11 +37,25 @@ var countWordTests = []test{
 
 func TestGetWords(t *testing.T) {
 	for _, example := range countWordTests {
-		actual := len(getWords(example.sentance))
+		actual := len(getWords(example.sentence))
 		if actual != example.expected {
-			t.Errorf("len(getWords(%s)): expected %d, actual %d", example.sentance, example.expected, actual)
+			t.Errorf("len(getWords(%s)): expected %d, actual %d", example.sentence, example.expected, actual)
 		}
+	}
+}
 
+var getLetterTypeTest = []testRunes{
+	{'i', 1}, {'u', 1},
+	{'a', 2}, {'e', 2}, {'o', 2}, {'í', 2}, {'ú', 2},
+	{'b', 3}, {'c', 3}, {'q', 3}, {'r', 3}, {'z', 3},
+}
+
+func TestgetLetterType(t *testing.T) {
+	for _, example := range getLetterTypeTest {
+		actual := getLetterType(example.letter)
+		if actual != example.expected {
+			t.Errorf("Got %s, Expected %s", actual, example.expected)
+		}
 	}
 }
 
@@ -56,9 +75,9 @@ var countSyllablesTest = []test{
 
 func TestCountSyllables(t *testing.T) {
 	for _, example := range countSyllablesTest {
-		actual := countSyllables(example.sentance)
+		actual := countSyllables(example.sentence)
 		if actual != example.expected {
-			t.Errorf("countSyllables(%s): expected %d, actual %d", example.sentance, example.expected, actual)
+			t.Errorf("countSyllables(%s): expected %d, actual %d", example.sentence, example.expected, actual)
 		}
 
 	}
