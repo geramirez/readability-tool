@@ -6,6 +6,12 @@ import (
 	"unicode/utf8"
 )
 
+//PUNCTUATION is a regex string for finding ".", "?", and "!".
+var PUNCTUATION = regexp.MustCompile("[.?!]+\\s")
+
+// WORD is a regex string for words
+var WORD = regexp.MustCompile("\\w+")
+
 // Stats struct stores readability data for exports
 type Stats struct {
 	Syllables   int     `json:"syllables"`
@@ -14,17 +20,12 @@ type Stats struct {
 	Readability float32 `json:"readability"`
 }
 
-//PUNCTUATION is a regex string for finding ".", "?", and "!".
-var PUNCTUATION = regexp.MustCompile("[.?!]+\\s")
-
-// WORD is a regex string for words
-var WORD = regexp.MustCompile("\\w+")
-
+// countSentences returns the number of sentances in the text
 func countSentences(text string) int {
 	return len(PUNCTUATION.Split(text, -1))
 }
 
-// getWords
+// getWords returns an array of words in the string
 func getWords(text string) []string {
 	return WORD.FindAllString(text, -1)
 }
@@ -75,30 +76,35 @@ func countSyllables(word string) int {
 			}
 			vowelRun = 0
 		}
-
 	}
 	if vowelRun > 3 && wordLength > 3 {
 		syllables++
 	}
-
 	return syllables
 }
 
+// calculateReadability returns the spanish readability score
+func calculateReadability(syllables int, words int, sentences int) float32 {
+	return 206.84 - 60.0*(float32(syllables)/float32(words)) - 102.0*(float32(sentences)/float32(words))
+}
+
 // getCounts calculates syllables, words, and sentences
-func getCounts(text string) (int, int, int) {
+func getSyllablesAndWords(text string) (int, int) {
 	var totalSyllables, totalWords int
 	for _, word := range getWords(text) {
 		totalWords++
 		totalSyllables += countSyllables(word)
 	}
-	return totalSyllables, totalWords, countSentences(text)
+	return totalSyllables, totalWords
 }
 
 // GetStats calculates Fernandez Huerta's readability scores using an updated formula found here:
 // http://linguistlist.org/issues/22/22-2332.html
 // This function also returns syllables, words, and sentences.
 func GetStats(text string) Stats {
-	syllables, words, sentences := getCounts(text)
-	readability := 206.84 - 60.0*(float32(syllables)/float32(words)) - 102.0*(float32(sentences)/float32(words))
-	return Stats{syllables, words, sentences, readability}
+	var stats Stats
+	stats.Sentences = countSentences(text)
+	stats.Syllables, stats.Words = getSyllablesAndWords(text)
+	stats.Readability = calculateReadability(stats.Sentences, stats.Words, stats.Sentences)
+	return stats
 }
