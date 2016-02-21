@@ -1,2 +1,2 @@
 # Spanish Readability Calculator
-[![Go Report Card](http://goreportcard.com/badge/geramirez/sr-tool)](http://goreportcard.com/report/18F/angrytock)
+[![Go Report Card](https://goreportcard.com/badge/github.com/geramirez/readability-tool)](https://goreportcard.com/report/github.com/geramirez/readability-tool)
